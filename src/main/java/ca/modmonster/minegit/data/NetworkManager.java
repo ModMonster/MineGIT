@@ -7,6 +7,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class NetworkManager {
+    public static boolean hasValidCredentials = false;
+
     private static final HttpClient client;
     static {
         try {
@@ -24,7 +26,9 @@ public class NetworkManager {
 
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            return response.statusCode();
+            int status = response.statusCode();
+            hasValidCredentials = status == 200;
+            return status;
         } catch (IOException | InterruptedException e) {
             return -1;
         }

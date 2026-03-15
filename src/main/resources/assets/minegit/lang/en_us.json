@@ -4,7 +4,7 @@
   "minegit.link.pat": "GitHub Access Token",
   "minegit.link.test": "Test Credentials",
   "minegit.link.back": "Save and Exit",
-  "minegit.link.status.error_generic": "Something went wrong when trying to test your credentials!",
+  "minegit.link.status.error_generic": "Something went wrong when trying to test your credentials! (Error %s)",
   "minegit.link.status.error_pat": "Invalid access token.",
   "minegit.link.status.error_username": "Invalid username.",
   "minegit.link.status.success": "Success!"
