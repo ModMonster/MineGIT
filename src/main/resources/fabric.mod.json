@@ -1,0 +1,31 @@
+{
+	"schemaVersion": 1,
+	"id": "minegit",
+	"version": "${version}",
+	"name": "MineGIT",
+	"description": "Minecraft cloud save system using the power of GitHub!",
+	"authors": [
+		"ModMonster"
+	],
+	"contact": {
+		"homepage": "https://youtube.com/modmonster",
+		"sources": "https://github.com/modmonster/MineGIT"
+	},
+	"license": "MIT",
+	"icon": "assets/minegit/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"ca.modmonster.minegit.MineGIT"
+		]
+	},
+	"mixins": [
+		"minegit.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
