@@ -3,7 +3,7 @@
 	"package": "ca.modmonster.minegit.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ExampleMixin"
+      "SinglePlayerScreenMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

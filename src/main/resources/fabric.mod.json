@@ -15,7 +15,7 @@
 	"icon": "assets/minegit/icon.png",
 	"environment": "*",
 	"entrypoints": {
-		"main": [
+		"client": [
 			"ca.modmonster.minegit.MineGIT"
 		]
 	},
