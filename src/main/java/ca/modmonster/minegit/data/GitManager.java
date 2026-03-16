@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
@@ -12,6 +13,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.regex.Pattern;
 
 import ca.modmonster.minegit.MineGIT;
 
@@ -95,6 +97,25 @@ public class GitManager {
         } catch (GitAPIException | URISyntaxException e) {
             MineGIT.LOGGER.error("Error with Git repo", e);
             return false;
+        }
+    }
+
+    public static int cloneRepo(Minecraft minecraft, String repo) {
+        Config config = ConfigManager.getCurrentConfig();
+        String repoUrl = String.format("https://github.com/%s/%s.git", config.username, repo);
+        Path localWorldFolder = getPath(minecraft, repo.replaceFirst(Pattern.quote("minegit_"), ""));
+        try (Git ignored = Git.cloneRepository()
+                .setURI(repoUrl)
+                .setDirectory(localWorldFolder.toFile())
+                .setCredentialsProvider(new UsernamePasswordCredentialsProvider(config.username, config.getPat()))
+                .call()) {
+            return 0;
+        } catch (InvalidRemoteException e) {
+            MineGIT.LOGGER.error("Error cloning repo: Invalid remote", e);
+            return 1;
+        } catch (GitAPIException e) {
+            MineGIT.LOGGER.error("Error cloning repo", e);
+            return 2;
         }
     }
 

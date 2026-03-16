@@ -23,5 +23,13 @@
   "minegit.sync.status.git_push": "Pushing to GitHub...",
   "minegit.sync.status.git_push_error": "Something went wrong while pushing to GitHub!",
   "minegit.sync.enable.complete": "Successfully enabled cloud sync!",
-  "minegit.sync.enabled": "Cloud Sync Enabled!"
+  "minegit.sync.enabled": "Cloud Sync Enabled!",
+  "minegit.clone.repo": "Repository Name",
+  "minegit.clone.confirm": "Clone",
+  "minegit.clone.title": "Clone World",
+  "minegit.clone.back": "Back",
+  "minegit.clone.success": "Successfully cloned the world from GitHub!",
+  "minegit.clone.error_invalid_remote": "The world you are looking for doesn't exist!",
+  "minegit.clone.error_generic": "Something went wrong when trying to clone the world.",
+  "minegit.clone.in_progress": "Cloning..."
 }

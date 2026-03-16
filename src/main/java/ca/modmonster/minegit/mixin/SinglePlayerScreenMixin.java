@@ -1,6 +1,7 @@
 package ca.modmonster.minegit.mixin;
 
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldSelectionList;
@@ -19,6 +20,7 @@ import ca.modmonster.minegit.data.Config;
 import ca.modmonster.minegit.data.ConfigManager;
 import ca.modmonster.minegit.data.GitManager;
 import ca.modmonster.minegit.gui.AccountLinkScreen;
+import ca.modmonster.minegit.gui.CloneScreen;
 import ca.modmonster.minegit.gui.EnableWorldSyncScreen;
 import ca.modmonster.minegit.widget.WorldSyncButtonState;
 
@@ -30,6 +32,9 @@ public class SinglePlayerScreenMixin extends Screen {
     protected SinglePlayerScreenMixin(Component title) {
         super(title);
     }
+
+    @Unique @Nullable
+    private Button cloneButton;
 
     @Unique @Nullable
     private Button worldSyncButton;
@@ -59,6 +64,15 @@ public class SinglePlayerScreenMixin extends Screen {
         worldSyncButton.active = false;
         addRenderableWidget(worldSyncButton);
 
+        // Add clone button
+        cloneButton = Button.builder(Component.literal("↓"), button -> this.minecraft.setScreen(new CloneScreen(this, () -> {
+            if (this.list != null) this.list.returnToScreen();
+            updateWorldSyncButton();
+        }))).tooltip(Tooltip.create(Component.translatable("minegit.clone.title")))
+                .size(20, 20)
+                .build();
+        addRenderableWidget(cloneButton);
+
         repositionElements();
         updateWorldSyncButton();
 	}
@@ -73,6 +87,7 @@ public class SinglePlayerScreenMixin extends Screen {
     @Inject(at = @At("TAIL"), method = "repositionElements", remap = false)
     protected void repositionElements(CallbackInfo ci) {
         if (worldSyncButton != null) worldSyncButton.setPosition(width / 2 - 178, height - 52);
+        if (cloneButton != null) cloneButton.setPosition(width / 2 - 178, height - 28);
     }
 
     @Unique
