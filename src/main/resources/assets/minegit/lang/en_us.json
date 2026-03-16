@@ -18,5 +18,10 @@
   "minegit.sync.enable.confirm.cancel": "Cancel",
   "minegit.sync.back": "Back",
   "minegit.sync.enable.status.create_repo": "Creating GitHub repository...",
-  "minegit.sync.enable.status.create_repo.error": "Something went wrong while creating the GitHub repo! (Error %s)"
+  "minegit.sync.enable.status.create_repo.error": "Something went wrong while creating the GitHub repo! (Error %s)",
+  "minegit.sync.status.git_init": "Setting up Git repo...",
+  "minegit.sync.status.git_init_error": "Something went wrong while setting up the Git repo!",
+  "minegit.sync.status.git_push": "Pushing to GitHub...",
+  "minegit.sync.status.git_push_error": "Something went wrong while pushing to GitHub!",
+  "minegit.sync.enable.complete": "Successfully enabled cloud sync!"
 }

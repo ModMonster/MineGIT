@@ -1,7 +1,10 @@
 package ca.modmonster.minegit.gui;
 
+import com.google.gson.JsonParser;
+
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
@@ -11,7 +14,9 @@ import net.minecraft.world.level.storage.LevelSummary;
 import java.net.http.HttpResponse;
 
 import ca.modmonster.minegit.MineGIT;
+import ca.modmonster.minegit.data.Config;
 import ca.modmonster.minegit.data.ConfigManager;
+import ca.modmonster.minegit.data.GitManager;
 import ca.modmonster.minegit.data.NetworkManager;
 
 public class EnableWorldSyncScreen extends Screen {
@@ -77,10 +82,10 @@ public class EnableWorldSyncScreen extends Screen {
         cancelButton.active = false;
 
         // Create a repository on GitHub
-        String pat = ConfigManager.getCurrentConfig().getPat();
+        Config config = ConfigManager.getCurrentConfig();
         statusWidget.setMessage(Component.translatable("minegit.sync.enable.status.create_repo"));
         repositionElements();
-        HttpResponse<String> response = NetworkManager.createRepo(pat, level.getLevelId(), level.getLevelName());
+        HttpResponse<String> response = NetworkManager.createRepo(config.getPat(), level.getLevelId(), level.getLevelName());
         int statusCode = response == null? -1 : response.statusCode();
         if (statusCode != 201) {
             // OOPS! ERROR!!
@@ -90,10 +95,24 @@ public class EnableWorldSyncScreen extends Screen {
             repositionElements();
 
             if (response != null) MineGIT.LOGGER.error(response.body());
+            return;
         }
 
-        // Git init on world save folder
+        String repoUrl = JsonParser.parseString(response.body()).getAsJsonObject().get("clone_url").getAsString();
+        MineGIT.LOGGER.info("Successfully setup GitHub repo with URL: {}", repoUrl);
 
+        // Git init on world save folder
+        statusWidget.setMessage(Component.translatable("minegit.sync.status.git_init"));
+        repositionElements();
+        boolean ok = GitManager.init(minecraft, level.getLevelId(), repoUrl);
+        if (!ok) {
+            statusWidget.setMessage(Component.translatable("minegit.sync.status.git_init_error"));
+            repositionElements();
+            return;
+        }
+
+        minecraft.getToastManager().addToast(new SystemToast(new SystemToast.SystemToastId(), Component.translatable("minegit.sync.enable.complete"), null));
+        onClose();
     }
 
     @Override
