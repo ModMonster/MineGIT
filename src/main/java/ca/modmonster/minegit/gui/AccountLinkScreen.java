@@ -99,28 +99,31 @@ public class AccountLinkScreen extends Screen {
     private void testCredentials() {
         requestInProgress = true;
         updateTestButtonStatus(false);
-        int statusCode = NetworkManager.testCredentials(usernameEdit.getValue(), patEdit.getValue());
-        requestInProgress = false;
-        updateTestButtonStatus(false);
 
-        switch (statusCode) {
-            case 200:
-                updateTestCredentialsStatus(Component.translatable("minegit.link.status.success"));
-                updateTestButtonStatus(true);
-                break;
-            case 401:
-                updateTestCredentialsStatus(Component.translatable("minegit.link.status.error_pat"));
-                updateTestButtonStatus(true);
-                break;
-            case 404:
-                updateTestCredentialsStatus(Component.translatable("minegit.link.status.error_username"));
-                updateTestButtonStatus(true);
-                break;
-            default:
-                updateTestCredentialsStatus(Component.translatable("minegit.link.status.error_generic", statusCode));
-                updateTestButtonStatus(true);
-                break;
-        }
+        new Thread(() -> {
+            int statusCode = NetworkManager.testCredentials(usernameEdit.getValue(), patEdit.getValue());
+            requestInProgress = false;
+            updateTestButtonStatus(false);
+
+            switch (statusCode) {
+                case 200:
+                    updateTestCredentialsStatus(Component.translatable("minegit.link.status.success"));
+                    updateTestButtonStatus(true);
+                    break;
+                case 401:
+                    updateTestCredentialsStatus(Component.translatable("minegit.link.status.error_pat"));
+                    updateTestButtonStatus(true);
+                    break;
+                case 404:
+                    updateTestCredentialsStatus(Component.translatable("minegit.link.status.error_username"));
+                    updateTestButtonStatus(true);
+                    break;
+                default:
+                    updateTestCredentialsStatus(Component.translatable("minegit.link.status.error_generic", statusCode));
+                    updateTestButtonStatus(true);
+                    break;
+            }
+        }).start();
     }
 
     private void updateTestButtonStatus(boolean forceDisable) {

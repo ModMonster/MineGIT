@@ -17,6 +17,7 @@ public class CloneScreen extends Screen {
 
     private final Screen parent;
     private final Runnable closeCallback;
+    private Button backButton;
     private EditBox repoEdit;
     private Button testCredentialsButton;
     private ImageWidget ralspinWidget;
@@ -47,7 +48,7 @@ public class CloneScreen extends Screen {
         usernameEditLabel.setAlpha(0.5f);
         repoEdit = new EditBox(font, 0, 0, 200, 20, REPO_LABEL);
         repoEdit.setMaxLength(39);
-        repoEdit.setResponder(string -> updateTestButtonStatus());
+        repoEdit.setResponder(string -> updateButtonsStatus());
         columnLayout.addChild(repoEdit);
 
         // Clone button
@@ -63,7 +64,7 @@ public class CloneScreen extends Screen {
         this.layout.arrangeElements();
 
         // Back button
-        Button backButton = Button.builder(Component.literal("←"), button -> onClose())
+        backButton = Button.builder(Component.literal("←"), button -> onClose())
             .tooltip(Tooltip.create(Component.translatable("minegit.clone.back")))
             .bounds(6, 6, 20, 20)
             .build();
@@ -75,31 +76,38 @@ public class CloneScreen extends Screen {
         ralspinWidget.setTooltip(Tooltip.create(Component.literal("hiiiii!! ^-^")));
         addRenderableWidget(ralspinWidget);
 
-        updateTestButtonStatus();
+        updateButtonsStatus();
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void doClone() {
         requestInProgress = true;
         testCredentialsStatus.setMessage(Component.translatable("minegit.clone.in_progress"));
         repositionElements();
-        updateTestButtonStatus();
-        int result = GitManager.cloneRepo(minecraft, repoEdit.getValue());
-        requestInProgress = false;
-        if (result == 0) {
-            minecraft.getToastManager().addToast(new SystemToast(new SystemToast.SystemToastId(), Component.translatable("minegit.clone.success"), null));
-            onClose();
-        } else if (result == 1) {
-            testCredentialsStatus.setMessage(Component.translatable("minegit.clone.error_invalid_remote"));
-            repositionElements();
-            updateTestButtonStatus();
-        } else {
-            testCredentialsStatus.setMessage(Component.translatable("minegit.clone.error_generic"));
-            repositionElements();
-            updateTestButtonStatus();
-        }
+        updateButtonsStatus();
+        new Thread(() -> {
+            int result = GitManager.cloneRepo(minecraft, repoEdit.getValue());
+            requestInProgress = false;
+
+            minecraft.submit(() -> {
+                if (result == 0) {
+                    minecraft.getToastManager().addToast(new SystemToast(new SystemToast.SystemToastId(), Component.translatable("minegit.clone.success"), null));
+                    onClose();
+                } else if (result == 1) {
+                    testCredentialsStatus.setMessage(Component.translatable("minegit.clone.error_invalid_remote"));
+                    repositionElements();
+                    updateButtonsStatus();
+                } else {
+                    testCredentialsStatus.setMessage(Component.translatable("minegit.clone.error_generic"));
+                    repositionElements();
+                    updateButtonsStatus();
+                }
+            });
+        }).start();
     }
 
-    private void updateTestButtonStatus() {
+    private void updateButtonsStatus() {
+        backButton.active = !requestInProgress;
         testCredentialsButton.active = !requestInProgress && !repoEdit.getValue().isBlank();
     }
 
@@ -118,5 +126,10 @@ public class CloneScreen extends Screen {
     protected void repositionElements() {
         layout.arrangeElements();
         ralspinWidget.setPosition(width - 60, height - 80);
+    }
+
+    @Override
+    public boolean shouldCloseOnEsc() {
+        return !requestInProgress;
     }
 }

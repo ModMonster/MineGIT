@@ -108,6 +108,7 @@ public class GitManager {
                 .setURI(repoUrl)
                 .setDirectory(localWorldFolder.toFile())
                 .setCredentialsProvider(new UsernamePasswordCredentialsProvider(config.username, config.getPat()))
+                .setDepth(1)
                 .call()) {
             return 0;
         } catch (InvalidRemoteException e) {
