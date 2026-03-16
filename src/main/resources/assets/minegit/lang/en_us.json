@@ -1,5 +1,7 @@
 {
-  "minegit.link.title": "MineGIT Account Linking",
+  "minegit.link.title": "MineGit Cloud Sync Setup",
+  "minegit.link.setup": "Setup Cloud Syncing",
+  "minegit.link.setup.open": "Open Cloud Sync Setup",
   "minegit.link.username": "GitHub Username",
   "minegit.link.pat": "GitHub Access Token",
   "minegit.link.test": "Test Credentials",
@@ -7,5 +9,14 @@
   "minegit.link.status.error_generic": "Something went wrong when trying to test your credentials! (Error %s)",
   "minegit.link.status.error_pat": "Invalid access token.",
   "minegit.link.status.error_username": "Invalid username.",
-  "minegit.link.status.success": "Success!"
+  "minegit.link.status.success": "Success!",
+  "minegit.sync.title": "World Sync Settings",
+  "minegit.sync.enable": "Enable Cloud Sync",
+  "minegit.sync.enable.confirm.line1": "Would you like to enable cloud sync for %s?",
+  "minegit.sync.enable.confirm.line2": "A new GitHub repository will be created for this world.",
+  "minegit.sync.enable.confirm.ok": "OK!",
+  "minegit.sync.enable.confirm.cancel": "Cancel",
+  "minegit.sync.back": "Back",
+  "minegit.sync.enable.status.create_repo": "Creating GitHub repository...",
+  "minegit.sync.enable.status.create_repo.error": "Something went wrong while creating the GitHub repo! (Error %s)"
 }

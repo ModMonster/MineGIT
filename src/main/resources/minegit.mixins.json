@@ -1,14 +1,14 @@
 {
-	"required": true,
-	"package": "ca.modmonster.minegit.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-      "SinglePlayerScreenMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"overwrites": {
-		"requireAnnotations": true
-	}
+  "required": true,
+  "package": "ca.modmonster.minegit.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "SinglePlayerScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
 }

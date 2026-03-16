@@ -19,6 +19,7 @@ public class AccountLinkScreen extends Screen {
     private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this, 8 + 9 + 8 + 20 + 4, 60);
 
     private final Screen parent;
+    private final Runnable closeCallback;
     private EditBox usernameEdit;
     private EditBox patEdit;
     private Button testCredentialsButton;
@@ -27,8 +28,13 @@ public class AccountLinkScreen extends Screen {
     private StringWidget testCredentialsStatus;
 
     public AccountLinkScreen(Screen parent) {
+        this(parent, null);
+    }
+
+    public AccountLinkScreen(Screen parent, Runnable closeCallback) {
         super(Component.translatable("minegit.link.title"));
         this.parent = parent;
+        this.closeCallback = closeCallback;
     }
 
     @Override
@@ -86,7 +92,7 @@ public class AccountLinkScreen extends Screen {
         // Load configuration and update default values
         Config config = ConfigManager.getCurrentConfig();
         usernameEdit.setValue(config.username);
-        String pat = CryptoManager.decrypt(config.patEncrypted);
+        String pat = config.getPat();
         if (pat != null) patEdit.setValue(pat);
     }
 
@@ -133,6 +139,7 @@ public class AccountLinkScreen extends Screen {
         String pat = CryptoManager.encrypt(patEdit.getValue());
         ConfigManager.save(new Config(username, pat));
         minecraft.setScreen(parent);
+        if (closeCallback != null) closeCallback.run();
     }
 
     @Override
