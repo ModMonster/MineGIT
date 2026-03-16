@@ -9,8 +9,8 @@ public class MineGIT implements ClientModInitializer {
 	public static final String MOD_ID = "minegit";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	@Override
-	public void onInitializeClient() {
-		LOGGER.info("Hello Fabric world!");
-	}
+    @Override
+    public void onInitializeClient() {
+
+    }
 }

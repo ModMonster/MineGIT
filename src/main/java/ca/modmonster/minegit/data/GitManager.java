@@ -17,8 +17,11 @@ import ca.modmonster.minegit.MineGIT;
 
 public class GitManager {
     public static boolean syncEnabled(Minecraft minecraft, String worldId) {
-        Path worldFolder = getPath(minecraft, worldId).resolve(".git");
-        return worldFolder.toFile().exists();
+        return syncEnabled(getPath(minecraft, worldId));
+    }
+
+    public static boolean syncEnabled(Path worldFolder) {
+        return worldFolder.resolve(".git").toFile().exists();
     }
 
     public static boolean pull(Minecraft minecraft, String worldId) {
@@ -33,7 +36,10 @@ public class GitManager {
     }
 
     public static boolean push(Minecraft minecraft, String worldId) {
-        Path worldFolder = getPath(minecraft, worldId);
+        return push(getPath(minecraft, worldId));
+    }
+
+    public static boolean push(Path worldFolder) {
         Config config = ConfigManager.getCurrentConfig();
         try (Git git = Git.open(worldFolder.toFile())) {
             // add all

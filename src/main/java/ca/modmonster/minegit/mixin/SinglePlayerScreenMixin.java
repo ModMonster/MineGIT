@@ -17,9 +17,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import ca.modmonster.minegit.data.Config;
 import ca.modmonster.minegit.data.ConfigManager;
+import ca.modmonster.minegit.data.GitManager;
 import ca.modmonster.minegit.gui.AccountLinkScreen;
 import ca.modmonster.minegit.gui.EnableWorldSyncScreen;
-import ca.modmonster.minegit.gui.WorldSyncScreen;
 import ca.modmonster.minegit.widget.WorldSyncButtonState;
 
 @Mixin(SelectWorldScreen.class)
@@ -54,11 +54,6 @@ public class SinglePlayerScreenMixin extends Screen {
                     if (this.list != null) this.list.returnToScreen();
                     updateWorldSyncButton();
                 }));
-            } else if (worldSyncButtonState == WorldSyncButtonState.WORLD_CONFIGURE) {
-                if (hoveredLevel != null) this.minecraft.setScreen(new WorldSyncScreen(this, hoveredLevel, () -> {
-                    if (this.list != null) this.list.returnToScreen();
-                    updateWorldSyncButton();
-                }));
             }
         }).size(20, 20).build();
         worldSyncButton.active = false;
@@ -71,8 +66,8 @@ public class SinglePlayerScreenMixin extends Screen {
     @Inject(at = @At("TAIL"), method = "updateButtonStatus", remap = false)
     private void updateButtonStatus(LevelSummary levelSummary, CallbackInfo ci) {
         if (worldSyncButton == null) return;
-        if (levelSummary != null) hoveredLevel = levelSummary;
-        this.worldSyncButton.active = levelSummary != null || worldSyncButtonState == WorldSyncButtonState.SETUP;
+        hoveredLevel = levelSummary;
+        updateWorldSyncButton();
     }
 
     @Inject(at = @At("TAIL"), method = "repositionElements", remap = false)
@@ -87,9 +82,13 @@ public class SinglePlayerScreenMixin extends Screen {
         if (config.username.isBlank() || config.getPat().isBlank()) {
             // Set the world sync button to configuration state
             worldSyncButtonState = WorldSyncButtonState.SETUP;
+            this.worldSyncButton.active = true;
+        } else if (hoveredLevel != null && GitManager.syncEnabled(minecraft, hoveredLevel.getLevelId())) {
+            worldSyncButtonState = WorldSyncButtonState.WORLD_CONFIGURE;
+            this.worldSyncButton.active = false;
         } else {
-            // TODO: check if syncing already enabled for world
             worldSyncButtonState = WorldSyncButtonState.ENABLE;
+            this.worldSyncButton.active = hoveredLevel != null;
         }
 
         worldSyncButtonState.apply(worldSyncButton);

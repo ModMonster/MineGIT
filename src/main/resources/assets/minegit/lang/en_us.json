@@ -10,7 +10,6 @@
   "minegit.link.status.error_pat": "Invalid access token.",
   "minegit.link.status.error_username": "Invalid username.",
   "minegit.link.status.success": "Success!",
-  "minegit.sync.title": "World Sync Settings",
   "minegit.sync.enable": "Enable Cloud Sync",
   "minegit.sync.enable.confirm.line1": "Would you like to enable cloud sync for %s?",
   "minegit.sync.enable.confirm.line2": "A new GitHub repository will be created for this world.",
@@ -23,5 +22,6 @@
   "minegit.sync.status.git_init_error": "Something went wrong while setting up the Git repo!",
   "minegit.sync.status.git_push": "Pushing to GitHub...",
   "minegit.sync.status.git_push_error": "Something went wrong while pushing to GitHub!",
-  "minegit.sync.enable.complete": "Successfully enabled cloud sync!"
+  "minegit.sync.enable.complete": "Successfully enabled cloud sync!",
+  "minegit.sync.enabled": "Cloud Sync Enabled!"
 }

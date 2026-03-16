@@ -17,6 +17,7 @@ public class Config {
     public String getPat() {
         if (pat == null) {
             pat = CryptoManager.decrypt(patEncrypted);
+            if (pat == null) pat = "";
         }
         return pat;
     }
