@@ -47,14 +47,17 @@ public class SinglePlayerScreenMixin extends Screen {
             if (worldSyncButtonState == WorldSyncButtonState.SETUP) {
                 this.minecraft.setScreen(new AccountLinkScreen(this, () -> {
                     if (this.list != null) this.list.returnToScreen();
+                    updateWorldSyncButton();
                 }));
             } else if (worldSyncButtonState == WorldSyncButtonState.ENABLE) {
                 if (hoveredLevel != null) this.minecraft.setScreen(new EnableWorldSyncScreen(this, hoveredLevel, () -> {
                     if (this.list != null) this.list.returnToScreen();
+                    updateWorldSyncButton();
                 }));
             } else if (worldSyncButtonState == WorldSyncButtonState.WORLD_CONFIGURE) {
                 if (hoveredLevel != null) this.minecraft.setScreen(new WorldSyncScreen(this, hoveredLevel, () -> {
                     if (this.list != null) this.list.returnToScreen();
+                    updateWorldSyncButton();
                 }));
             }
         }).size(20, 20).build();
