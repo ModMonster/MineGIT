@@ -31,5 +31,7 @@
   "minegit.clone.success": "Successfully cloned the world from GitHub!",
   "minegit.clone.error_invalid_remote": "The world you are looking for doesn't exist!",
   "minegit.clone.error_generic": "Something went wrong when trying to clone the world.",
-  "minegit.clone.in_progress": "Cloning..."
+  "minegit.clone.in_progress": "Cloning...",
+  "minegit.sync.status.git_pull": "Pulling from GitHub...",
+  "minegit.sync.status.git_pull_error": "Something went wrong while pulling from GitHub!"
 }

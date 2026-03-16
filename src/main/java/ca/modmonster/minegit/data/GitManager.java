@@ -28,8 +28,12 @@ public class GitManager {
 
     public static boolean pull(Minecraft minecraft, String worldId) {
         Path worldFolder = getPath(minecraft, worldId);
+        Config config = ConfigManager.getCurrentConfig();
         try (Git git = Git.open(worldFolder.toFile())) {
-            git.pull().call();
+            git.pull()
+                    .setRemote("origin")
+                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(config.username, config.getPat()))
+                    .call();
             return true;
         } catch (IOException | GitAPIException e) {
             MineGIT.LOGGER.error("Error pulling from repo", e);
