@@ -34,9 +34,8 @@ public class LevelSaveMixin {
     private void onWorldSaved(CallbackInfo ci) {
         MinecraftServer server = (MinecraftServer) (Object) this;
         Path worldFolder = server.getWorldPath(LevelResource.ROOT); // get world folder
-        MineGIT.LOGGER.info("WORLD STOPPED! {}", worldFolder.toString());
         if (!GitManager.syncEnabled(worldFolder)) return;
-        MineGIT.LOGGER.info("PUSHING!!!! {}", worldFolder.toString());
+        MineGIT.LOGGER.info("Pushing current world to GitHub");
 
         minecraft.submit(() -> {
             minecraft.setScreen(new GenericMessageScreen(Component.translatable("minegit.sync.status.git_push")));
