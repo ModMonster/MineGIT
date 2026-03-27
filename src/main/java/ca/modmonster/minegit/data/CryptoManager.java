@@ -1,12 +1,15 @@
 package ca.modmonster.minegit.data;
 
-import java.net.NetworkInterface;
-import java.net.SocketException;
+import net.fabricmc.loader.api.FabricLoader;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
+import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.List;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -46,8 +49,8 @@ public class CryptoManager {
     public static byte[] getMachineKey() {
         if (machineKey != null) return machineKey;
 
-        String[] properties = {"os.arch", "java.io.tmpdir", "native.encoding", "user.name", "user.home", "user.country", "sun.io.unicode.encoding", "stderr.encoding", "sun.cpu.endian", "sun.cpu.isalist", "sun.jnu.encoding", "stdout.encoding", "sun.arch.data.model", "user.language", "user.variant"};
-        String[] environmentVariables = {"COMPUTERNAME", "PROCESSOR_ARCHITECTURE", "PROCESSOR_REVISION", "PROCESSOR_IDENTIFIER", "PROCESSOR_LEVEL", "NUMBER_OF_PROCESSORS", "OS", "USERNAME", "USERDOMAIN", "USERDOMAIN_ROAMINGPROFILE", "APPDATA", "HOMEPATH", "LOGONSERVER", "LOCALAPPDATA", "TEMP", "TMP"};
+        String[] properties = {"os.arch", "user.name", "user.home", "sun.cpu.endian", "sun.cpu.isalist"};
+        String[] environmentVariables = {"COMPUTERNAME", "PROCESSOR_ARCHITECTURE", "PROCESSOR_REVISION", "PROCESSOR_IDENTIFIER", "PROCESSOR_LEVEL", "NUMBER_OF_PROCESSORS", "OS", "USERNAME", "USERDOMAIN", "APPDATA", "HOMEPATH", "LOCALAPPDATA"};
 
         StringBuilder fingerprint = new StringBuilder();
         fingerprint.append(Runtime.getRuntime().availableProcessors());
@@ -62,17 +65,33 @@ public class CryptoManager {
             fingerprint.append(System.getenv(var));
         }
 
-        try {
-            List<NetworkInterface> networkInterfaces = NetworkInterface.networkInterfaces().toList();
-            for (NetworkInterface net : networkInterfaces) {
-                fingerprint.append(net.getName());
-                fingerprint.append(net.getDisplayName());
-                fingerprint.append(Arrays.toString(net.getHardwareAddress()));
-                fingerprint.append(net.getMTU());
+        // Save a randomly generated key to a file
+        Path keyFilePath = FabricLoader.getInstance().getConfigDir().resolve(".minegit.key");
+        String fileKey = null;
+        if (keyFilePath.toFile().exists()) {
+            try {
+                fileKey = Files.readString(keyFilePath, StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to read from key file", e);
             }
-        } catch (SocketException e) {
-            MineGIT.LOGGER.info("No network interfaces found for encryption");
+
+            // Set file as hidden on Windows
+            try {
+                Files.setAttribute(keyFilePath, "dos:hidden", true);
+            } catch (IOException ignored) {}
+        } else {
+            byte[] key = new byte[32];
+            new SecureRandom().nextBytes(key);
+            String encoded = Base64.getEncoder().encodeToString(key);
+            try {
+                Files.writeString(keyFilePath, encoded, StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to write to key file", e);
+            }
         }
+        if (fileKey == null) throw new RuntimeException("Something went wrong with the key file.");
+        fingerprint.append(fileKey);
+
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             machineKey = digest.digest(fingerprint.toString().getBytes());
