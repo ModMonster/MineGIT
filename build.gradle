@@ -17,6 +17,11 @@ repositories {
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
     mavenCentral()
+
+    maven {
+        name = "Terraformers"
+        url = "https://maven.terraformersmc.com/"
+    }
 }
 
 dependencies {
@@ -31,6 +36,9 @@ dependencies {
     // JGit
     implementation "org.eclipse.jgit:org.eclipse.jgit:7.6.0.202603022253-r"
     include "org.eclipse.jgit:org.eclipse.jgit:7.6.0.202603022253-r"
+
+    // Mod Menu
+    modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 
 processResources {
