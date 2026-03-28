@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
+import org.eclipse.jgit.lib.ProgressMonitor;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
@@ -26,13 +27,14 @@ public class GitManager {
         return worldFolder.resolve(".git").toFile().exists();
     }
 
-    public static boolean pull(Minecraft minecraft, String worldId) {
+    public static boolean pull(Minecraft minecraft, String worldId, ProgressMonitor progressMonitor) {
         Path worldFolder = getPath(minecraft, worldId);
         Config config = ConfigManager.getCurrentConfig();
         try (Git git = Git.open(worldFolder.toFile())) {
             git.pull()
                     .setRemote("origin")
                     .setCredentialsProvider(new UsernamePasswordCredentialsProvider(config.username, config.getPat()))
+                    .setProgressMonitor(progressMonitor)
                     .call();
             return true;
         } catch (IOException | GitAPIException e) {
@@ -41,11 +43,7 @@ public class GitManager {
         }
     }
 
-    public static boolean push(Minecraft minecraft, String worldId) {
-        return push(getPath(minecraft, worldId));
-    }
-
-    public static boolean push(Path worldFolder) {
+    public static boolean push(Path worldFolder, ProgressMonitor progressMonitor) {
         Config config = ConfigManager.getCurrentConfig();
         try (Git git = Git.open(worldFolder.toFile())) {
             // add all
@@ -61,6 +59,7 @@ public class GitManager {
             git.push()
                     .setRemote("origin")
                     .setCredentialsProvider(new UsernamePasswordCredentialsProvider(config.username, config.getPat()))
+                    .setProgressMonitor(progressMonitor)
                     .call();
             return true;
         } catch (GitAPIException | IOException e) {
