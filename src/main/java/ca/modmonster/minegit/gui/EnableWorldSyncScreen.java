@@ -1,5 +1,10 @@
 package ca.modmonster.minegit.gui;
 
+import ca.modmonster.minegit.MineGIT;
+import ca.modmonster.minegit.data.Config;
+import ca.modmonster.minegit.data.ConfigManager;
+import ca.modmonster.minegit.data.GitManager;
+import ca.modmonster.minegit.data.NetworkManager;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
@@ -11,12 +16,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.storage.LevelSummary;
 
 import java.net.http.HttpResponse;
-
-import ca.modmonster.minegit.MineGIT;
-import ca.modmonster.minegit.data.Config;
-import ca.modmonster.minegit.data.ConfigManager;
-import ca.modmonster.minegit.data.GitManager;
-import ca.modmonster.minegit.data.NetworkManager;
 
 public class EnableWorldSyncScreen extends Screen {
     private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this, 8 + 9 + 8 + 20 + 4, 60);
@@ -79,8 +78,8 @@ public class EnableWorldSyncScreen extends Screen {
         cancelButton = Button.builder(Component.translatable("gui.cancel"), _ -> onClose()).build();
         buttonRowLayout.addChild(cancelButton);
 
-        openSetupButton = Button.builder(Component.translatable("minegit.link.setup.open"), button -> minecraft.gui.setScreen(new AccountLinkScreen(this.parent, closeCallback))).build();
-        openSetupButton.visible = false;
+        openSetupButton = Button.builder(Component.translatable("minegit.link.setup.open"), _ -> minecraft.gui.setScreen(new AccountLinkScreen(this.parent, closeCallback))).build();
+        openSetupButton.setVisible(false);
         columnLayout.addChild(openSetupButton);
 
         // Add layout widgets
@@ -114,7 +113,7 @@ public class EnableWorldSyncScreen extends Screen {
                     minecraft.submit(() -> {
                         SystemToast.add(minecraft.gui.toastManager(), new SystemToast.SystemToastId(),
                                 Component.translatable("minegit.sync.enable.create_repo.error", config.gitService.getNaturalName(), statusCode), null);
-                        openSetupButton.visible = true;
+                        openSetupButton.setVisible(true);
                         cancelButton.active = true;
                         if (response != null) MineGIT.LOGGER.error(response.body());
                         minecraft.gui.setScreen(this);
